@@ -60,25 +60,21 @@ async def on_message(message: discord.Message) -> None:
     if message.author == client.user:
         return
 
-    responses = [
-        "I like ground control token.",
-        "GCT",
-        ("Ground control token is stupid as fuck. JK!"),
-    ]
-
-    if message.content.lower() == "!Jumbalaya".lower():
-        response = random.choice(responses)
-        await message.channel.send(response)
-    elif message.content.lower() == "!sol".lower():
+    if message.content.lower() == "!sol".lower():
         await message.channel.send(getInfo(cmc_index["solana"]))
     elif message.content.lower() == "!btc".lower():
         await message.channel.send(getInfo(cmc_index["bitcoin"]))
     elif message.content.lower() == "!caw".lower():
         await message.channel.send(getInfo(cmc_index["crow-with-knife"]))
-    elif message.content.lower() == "!beer".lower():
-        file = discord.File(
-            "media/new-belgium-voodoo-ranger-danger-beach-ipa-voodoo-vice-ipa-LEAD.png"
+    elif message.content.lower() == "!gct".lower():
+        response = random.choice(
+            [
+                "media/gct1.gif",
+                "media/gct2.gif",
+                "media/gct3.gif",
+            ]
         )
+        file = discord.File(response)
         await message.channel.send(file=file)
 
 
