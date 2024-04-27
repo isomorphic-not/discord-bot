@@ -34,7 +34,7 @@ async def on_message(message: discord.Message) -> None:
             raise EnvironmentError("CMC_KEY is empty")
         embed = getCryptoMessage(msg, CMC_KEY)
         await message.channel.send(embed=embed)
-    elif msg in MessageTriggers.other_ids:
+    elif msg == MessageTriggers.other_ids:
         response = random.choice(media)
         file = discord.File(response)
         await message.channel.send(file=file)
