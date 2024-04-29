@@ -1,25 +1,24 @@
-import os
 import random
+from pathlib import Path
 
 import discord
-from dotenv import load_dotenv
 
-from constants import MessageTriggers, media
+import setup_db
+from constants import CMC_KEY, TOKEN, media
 from cutils import getCryptoMessage
+from setup_db import get_symbols
 
 intents = discord.Intents.default()
 intents.message_content = True
 client = discord.Client(intents=intents)
 
-load_dotenv()
-if not (TOKEN := os.getenv("DISCORD_TOKEN")):
-    raise EnvironmentError("TOKEN is empty")
-if not (CMC_KEY := os.getenv("CMC_KEY")):
-    raise EnvironmentError("CMC_KEY is empty")
-
 
 @client.event
 async def on_ready() -> None:
+    if not Path("crypto_data.db").exists():
+        print(f"Creating new database...")
+        setup_db.setup_db()
+        print(f"Done!")
     if client.user:
         print(f"{client.user.name} has connected to Discord!")
 
@@ -29,12 +28,13 @@ async def on_message(message: discord.Message) -> None:
     if message.author == client.user:
         return
     msg = message.content.lower()
-    if msg in MessageTriggers.crypto_ids:
+    if msg in get_symbols():
         if not CMC_KEY:
             raise EnvironmentError("CMC_KEY is empty")
-        embed = getCryptoMessage(msg, CMC_KEY)
-        await message.channel.send(embed=embed)
-    elif msg == MessageTriggers.other_ids:
+        embed, image_path = getCryptoMessage(msg, CMC_KEY)
+        file = discord.File(image_path, filename=image_path)
+        await message.channel.send(file=file, embed=embed)
+    elif msg == "!gct":
         response = random.choice(media)
         file = discord.File(response)
         await message.channel.send(file=file)
