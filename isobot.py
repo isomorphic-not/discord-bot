@@ -39,13 +39,14 @@ async def on_message(message: discord.Message) -> None:
     if msg_value_len == 2:
         command = msg_value[1]
 
+    if command and command not in ["price"]:
+        return
+
     if symbol in DatabaseManager().get_symbols():
         if not CMC_KEY:
             raise EnvironmentError("CMC_KEY is empty")
-        if command and command in ["price", "volume"]:
-            print("did it")
         cmc_api = CoinMarketCapAPI(CMC_KEY)
-        embed, image_path = cmc_api.getCryptoMessage(symbol)
+        embed, image_path = cmc_api.getCryptoMessage(symbol, command)
 
         file = discord.File(image_path, filename=image_path.name)
         await message.channel.send(file=file, embed=embed)
