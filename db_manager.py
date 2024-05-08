@@ -38,6 +38,13 @@ class DatabaseManager:
             )
         self.conn.commit()
 
+    def add_crypto(self, name) -> None:
+        data = cutils.CoinMarketCapAPI(CMC_KEY).getSingle(name)
+        self.cursor.execute(
+            "UPDATE crypto_data SET symbol=?, rank=?, name=? WHERE id=?", data
+        )
+        self.conn.commit()
+
     def check_image_exists(self, crypto_id) -> bool:
         try:
             self.cursor.execute(

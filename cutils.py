@@ -50,6 +50,15 @@ class CoinMarketCapAPI:
             }
         return results
 
+    def getSingle(self, name: str) -> tuple:
+        parameters = {"slug": name}
+        json_data = self._make_request("cryptocurrency/info", params=parameters)["data"]
+        single_id = list(json_data.keys())[0]
+        name = json_data[single_id]["slug"]
+        symbol = f"${json_data[single_id]['symbol'].lower()}"
+        rank = 10
+        return symbol, rank, name, single_id
+
     def getLogo(self, symbol: str) -> typing.Any:
         db_manager = DatabaseManager()
         parameters = {"slug": db_manager.get_attr_with_symbol(symbol, "name")}
@@ -151,3 +160,6 @@ class CoinMarketCapAPI:
                 embed.add_field(name=key, value=value, inline=False)
 
         return embed, image_path
+
+
+DatabaseManager().add_crypto("kendu-inu")
